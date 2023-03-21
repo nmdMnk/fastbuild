@@ -30,11 +30,16 @@ Improvements and bug fixes are gladly accepted. FASTBuild has been improved imme
 
 **Adhere to the coding style** - Please keep variable/function naming, whitespace style and indentation (4 space tabs) consistent. Consistency helps keep the code maintainable.
 
+---
+
 ## How-to compile FASTBuild
-Prerequesites
+### Prerequesites
 - VS2022 or Build Tools (14.35.32215) incl CLang 14
 - Download release version of FASTBuild
 
-Compile
+### Compile
 - Use the downloaded version to build FASTBuild with FASTBuild, e.g. using the following command:
   _.\FBuild.exe -summary -vs -monitor -dist_ 
+
+### Deploy Unreal
+- Update the FBuild.exe & FBuildWorker.exe in Engine\Extras\ThirdPartyNotUE\FASTBuild\Win64
