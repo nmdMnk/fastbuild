@@ -29,3 +29,12 @@ Improvements and bug fixes are gladly accepted. FASTBuild has been improved imme
 **Update documentation if appropriate** - For changes in behaviour, or addition of new features, please update the documentation.
 
 **Adhere to the coding style** - Please keep variable/function naming, whitespace style and indentation (4 space tabs) consistent. Consistency helps keep the code maintainable.
+
+## How-to compile FASTBuild
+Prerequesites
+- VS2022 or Build Tools (14.35.32215) incl CLang 14
+- Download release version of FASTBuild
+
+Compile
+- Use the downloaded version to build FASTBuild with FASTBuild, e.g. using the following command:
+  _.\FBuild.exe -summary -vs -monitor -dist_ 

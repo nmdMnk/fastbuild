@@ -45,14 +45,23 @@
                 .VS2022_MSC_VER         = '1935'
             #else
                 //
-                // Failed
+                // Use Build Tools 2022 installation
                 //
-                Print( '-----------------------------------------------------------------------' )
-                Print( '- Unable to auto-detect VS2022 - please specify installation manually -' )
-                Print( '-----------------------------------------------------------------------' )
-                .VS2022_BasePath        = .Set_Path_Here    // <-- Set path here
-                .VS2022_Version         = .Set_Version_Here // <-- Set version here
-                .VS2022_MSC_VER         = .Set_MSC_VER_Here // <-- Set MSC_VER here
+                #if file_exists("C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.34.31933/bin/Hostx64/x64/cl.exe")
+                    .VS2022_BasePath        = 'C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC'
+                    .VS2022_Version         = '14.34.31933'
+                    .VS2022_MSC_VER         = '1931'
+                #else
+                    //
+                    // Failed
+                    //
+                    Print( '-----------------------------------------------------------------------' )
+                    Print( '- Unable to auto-detect VS2022 - please specify installation manually -' )
+                    Print( '-----------------------------------------------------------------------' )
+                    .VS2022_BasePath        = .Set_Path_Here    // <-- Set path here
+                    .VS2022_Version         = .Set_Version_Here // <-- Set version here
+                    .VS2022_MSC_VER         = .Set_MSC_VER_Here // <-- Set MSC_VER here
+                #endif
             #endif
         #endif
     #endif
