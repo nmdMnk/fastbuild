@@ -47,10 +47,10 @@
                 //
                 // Use Build Tools 2022 installation
                 //
-                #if file_exists("C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.34.31933/bin/Hostx64/x64/cl.exe")
+                #if file_exists("C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.35.32215/bin/Hostx64/x64/cl.exe")
                     .VS2022_BasePath        = 'C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC'
-                    .VS2022_Version         = '14.34.31933'
-                    .VS2022_MSC_VER         = '1931'
+                    .VS2022_Version         = '14.35.32215'
+                    .VS2022_MSC_VER         = '1935'
                 #else
                     //
                     // Failed

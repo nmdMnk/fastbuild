@@ -384,15 +384,20 @@ void FBuild::SaveDependencyGraph( MemoryStream & stream, const char* nodeGraphDB
     // create worker threads
     m_JobQueue = FNEW( JobQueue( m_Options.m_NumWorkerThreads, m_ThreadPool ) );
 
+    const SettingsNode * settings = m_DependencyGraph->GetSettings();
+    // Worker list from Settings takes priority
+    bool settingsHasWorkers = !settings->GetWorkerList().IsEmpty();
+    
     // create the connection management system if needed
     // (must be after JobQueue is created)
     if ( m_Options.m_AllowDistributed )
     {
-        const SettingsNode * settings = m_DependencyGraph->GetSettings();
-
-        // Worker list from Settings takes priority
-        Array< AString > workers( settings->GetWorkerList() );
-        if ( workers.IsEmpty() )
+        Array<AString> workers;
+        if (settingsHasWorkers)
+        {
+            workers = settings->GetWorkerList();
+        }
+        else
         {
             // check for workers through brokerage or environment
             m_WorkerBrokerage.FindWorkers( workers );
@@ -401,7 +406,7 @@ void FBuild::SaveDependencyGraph( MemoryStream & stream, const char* nodeGraphDB
         if ( workers.IsEmpty() )
         {
             FLOG_WARN( "No workers available - Distributed compilation disabled" );
-            m_Options.m_AllowDistributed = false;
+            //m_Options.m_AllowDistributed = false;
         }
         else
         {
@@ -429,7 +434,8 @@ void FBuild::SaveDependencyGraph( MemoryStream & stream, const char* nodeGraphDB
     }
 
     bool stopping( false );
-
+    Timer workersCheckTimer;
+    workersCheckTimer.Start();
     // keep doing build passes until completed/failed
     {
         BuildProfilerScope buildProfileScope( "Build" );
@@ -501,6 +507,24 @@ void FBuild::SaveDependencyGraph( MemoryStream & stream, const char* nodeGraphDB
 
             // update progress
             UpdateBuildStatus( nodeToBuild );
+
+            // update workers list
+            if ( m_Options.m_AllowDistributed && !settingsHasWorkers && workersCheckTimer.GetElapsed() >= 30.f )
+            {
+                workersCheckTimer.Start();
+                Array<AString> workers;
+                m_WorkerBrokerage.FindWorkers( workers );
+
+                if ( workers.IsEmpty() )
+                {
+                    FLOG_WARN( "No workers available - Distributed compilation disabled" );
+                }
+                else
+                {
+                    OUTPUT( "Distributed Compilation : %u Workers in pool '%s'\n", (uint32_t)workers.GetSize(), m_WorkerBrokerage.GetBrokerageRootPaths().Get() );
+                    m_Client = FNEW( Client( workers, m_Options.m_DistributionPort, settings->GetWorkerConnectionLimit(), m_Options.m_DistVerbose ) );
+                }
+            }
         }
 
         // wrap up/free any jobs that come from the last build pass

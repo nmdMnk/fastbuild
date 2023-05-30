@@ -40,7 +40,7 @@
 // Defines
 //------------------------------------------------------------------------------
 // Enable for debugging
-//#define TCPCONNECTION_DEBUG
+#define TCPCONNECTION_DEBUG
 #ifdef TCPCONNECTION_DEBUG
     #include "Core/Tracing/Tracing.h"
     #define TCPDEBUG( ... ) DEBUGSPAM( __VA_ARGS__ )

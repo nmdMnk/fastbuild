@@ -4,8 +4,6 @@
 
 // Includes
 //------------------------------------------------------------------------------
-#include "Core/Process/Mutex.h"
-#include "Core/Process/Thread.h"
 #include "Core/Strings/AStackString.h"
 
 // Forward Declarations
