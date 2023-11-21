@@ -36,6 +36,8 @@ namespace Protocol
 
     enum { PROTOCOL_TEST_PORT = PROTOCOL_PORT + 1 }; // Different port for use by tests
 
+    enum { COORDINATOR_PORT = PROTOCOL_PORT + 128 }; // Different port for use by tests
+
     // Identifiers for all unique messages
     //------------------------------------------------------------------------------
     enum MessageType : uint8_t
@@ -60,6 +62,9 @@ namespace Protocol
 
         // v22.3 or later
         MSG_CONNECTION_ACK      = 12,// Server -> Client : Handshake ack
+        MSG_REQUEST_WORKER_LIST = 13,// Client -> Coordinator : Ask coordinator for the list of workers
+        MSG_WORKER_LIST         = 14,// Client <- Coordinator : Respond with the list of workers
+        MSG_SET_WORKER_STATUS   = 15,// Server -> Coordinator : Sets worker status (available or unavailable)
 
         NUM_MESSAGES            // leave last
     };
@@ -265,6 +270,47 @@ namespace Protocol
         MsgServerStatus();
     };
     static_assert( sizeof( MsgServerStatus ) == sizeof( IMessage ), "MsgServerStatus message has incorrect size" );
-}
+
+    // MsgRequestWorkersList
+    //------------------------------------------------------------------------------
+    class MsgRequestWorkerList : public IMessage
+    {
+    public:
+        MsgRequestWorkerList();
+
+        inline uint32_t GetProtocolVersion() const { return m_ProtocolVersion; }
+        inline uint8_t  GetPlatform() const { return m_Platform; }
+    private:
+        uint32_t        m_ProtocolVersion;
+        uint8_t         m_Platform;
+    };
+    static_assert( sizeof( MsgRequestWorkerList ) == sizeof( IMessage ) + 8, "MsgRequestWorkerList message has incorrect size" );
+
+    // MsgWorkerList
+    //------------------------------------------------------------------------------
+    class MsgWorkerList : public IMessage
+    {
+    public:
+        MsgWorkerList();
+    };
+    static_assert( sizeof( MsgWorkerList ) == sizeof( IMessage ), "MsgWorkerList message has incorrect size" );
+
+    // MsgSetWorkerStatus
+    //------------------------------------------------------------------------------
+    class MsgSetWorkerStatus : public IMessage
+    {
+    public:
+        explicit MsgSetWorkerStatus( bool isAvailable );
+
+        inline bool     IsAvailable() const { return m_IsAvailable; }
+        inline uint32_t GetProtocolVersion() const { return m_ProtocolVersion; }
+        inline uint8_t  GetPlatform() const { return m_Platform; }
+    private:
+        bool            m_IsAvailable;
+        uint32_t        m_ProtocolVersion;
+        uint8_t         m_Platform;
+    };
+    static_assert( sizeof( MsgSetWorkerStatus ) == sizeof( IMessage ) + 12, "MsgSetWorkerStatus message has incorrect size" );
+};
 
 //------------------------------------------------------------------------------
