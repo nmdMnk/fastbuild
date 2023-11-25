@@ -35,14 +35,15 @@ Coordinator::~Coordinator()
 int32_t Coordinator::Start()
 {
     // spawn work thread
-    m_WorkThread = Thread::CreateThread( &WorkThreadWrapper,
-                                        "CoordinatorThread",
-                                        ( 256 * KILOBYTE ),
-                                        this );
-    ASSERT( m_WorkThread != INVALID_THREAD_HANDLE );
+    Thread workThread;
+    workThread.Start( &WorkThreadWrapper,
+                      "CoordinatorThread",
+                      this,
+                      ( 256 * KILOBYTE ));
+    ASSERT( workThread.IsRunning() );
 
     // Join work thread and get exit code
-    return Thread::WaitForThread( m_WorkThread );
+    return static_cast<int32_t>(workThread.Join());
 }
 
 // WorkThreadWrapper

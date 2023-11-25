@@ -40,7 +40,9 @@
                                             'FBuildCoordinator-Lib-$Platform$-$BuildConfigName$',
                                             'FBuildCore-Lib-$Platform$-$BuildConfigName$',
                                             'Core-Lib-$Platform$-$BuildConfigName$',
-                                            'LZ4-Lib-$Platform$-$BuildConfigName$'
+                                            'LZ4-Lib-$Platform$-$BuildConfigName$',
+                                            'xxHash-Lib-$Platform$-$BuildConfigName$',
+                                            'Zstd-Lib-$Platform$-$BuildConfigName$'
                                           }
             #if __LINUX__
                 .LinkerOutput               = '$OutputBase$/$ProjectPath$/fbuildcoordinator$ExeExtension$' // NOTE: lower case

@@ -416,6 +416,13 @@ void WorkerBrokerage::SetAvailability( bool available )
                     
                     // Mode
                     AStackString<> mode;
+                    switch ( workerSettings.GetMode() )
+                    {
+                        case WorkerSettings::DISABLED:      mode = "disabled";      break;
+                        case WorkerSettings::WHEN_IDLE:     mode.Format( "idle @ %u%%", workerSettings.GetIdleThresholdPercent() ); break;
+                        case WorkerSettings::DEDICATED:     mode = "dedicated";    break;
+                        case WorkerSettings::PROPORTIONAL:  mode = "proportional"; break;
+                    }
                     
                     MemoryStream ms;
                     ms.Write(AString(FBUILD_VERSION_STRING));
