@@ -78,10 +78,10 @@ void WorkerBrokerage::InitBrokerage()
         return;
     }
 
-    Network::GetHostName(m_HostName);
+    Network::GetHostName(m_BaseHostName);
 
 #if defined( __APPLE__ )
-    ConvertHostNameToLocalIP4(m_HostName);
+    ConvertHostNameToLocalIP4(m_BaseHostName);
 #endif
 
     // brokerage path includes version to reduce unnecessary comms attempts

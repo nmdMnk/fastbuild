@@ -57,6 +57,7 @@ Process::Process( const volatile bool * mainAbortFlag,
     , m_MainAbortFlag( mainAbortFlag )
     , m_AbortFlag( abortFlag )
 {
+    m_HasAborted = false;
     #if defined( __WINDOWS__ )
         static_assert( sizeof( m_ProcessInfo ) == sizeof( PROCESS_INFORMATION ), "Unexpected sizeof(PROCESS_INFORMATION)" );
     #endif

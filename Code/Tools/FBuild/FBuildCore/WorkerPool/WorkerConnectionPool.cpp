@@ -147,7 +147,7 @@ void WorkerConnectionPool::OutputCurrentWorkers()
 {
     AStackString<> list;
     GetWorkersString( m_Workers, list );
-    OUTPUT_WITH_NOW( "current [%d] workers: [%s]\n", m_Workers.GetSize(), list.Get() );
+    OUTPUT_WITH_NOW( "current [%zu] workers: [%s]\n", m_Workers.GetSize(), list.Get() );
 }
 
 // Process ( MsgRequestWorkerList )
@@ -261,7 +261,7 @@ bool WorkerConnectionPool::ClearTimeoutWorkerWithoutMutex()
 
     for ( const auto & worker_info: m_Workers )
     {
-        if ( now - worker_info.m_LastHeartTick < 30 )
+        if ( now - worker_info.m_LastHeartTick < timeout )
         {
             newWorkers.Append(worker_info);
         }

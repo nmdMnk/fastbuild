@@ -21,7 +21,7 @@ class WorkerBrokerageServer : public WorkerBrokerage
 {
 public:
     WorkerBrokerageServer();
-    ~WorkerBrokerageServer();
+    ~WorkerBrokerageServer() override;
 
     void SetAvailability( bool available );
 

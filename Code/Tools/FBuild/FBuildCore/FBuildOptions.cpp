@@ -15,6 +15,8 @@
 #include "Core/Math/xxHash.h"
 #include "Core/Tracing/Tracing.h"
 
+#include "string.h" // for strlen
+
 // system
 #if defined( __WINDOWS__ )
     #include "Core/Env/WindowsHeader.h" // for QueryDosDeviceA

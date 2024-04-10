@@ -9,7 +9,7 @@ be found here: http://fastbuild.org
 
 ## Branch policy
 
-**Patches will only be accepted into the "dev" branch.**
+**Patches will only be accepted into the "dev" branch.** 
 
 | Branch | Purpose |
 | :----- | :----- |

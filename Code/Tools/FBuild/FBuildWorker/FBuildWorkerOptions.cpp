@@ -15,6 +15,7 @@
 
 // system
 #include <stdio.h>
+#include "string.h" // for strlen
 #if defined( __WINDOWS__ )
     #include "Core/Env/WindowsHeader.h"
 #endif
@@ -156,11 +157,11 @@ bool FBuildWorkerOptions::ProcessCommandLine( const AString & commandLine )
         }
         else if (token.BeginsWith("-help"))
         {
-            ShowUsageError(AStackString("Help"));
+            ShowUsageError(AStackString<>("Help"));
             return false;
         }
 
-        ShowUsageError(AStackString("Bad Command Line"));
+        ShowUsageError(AStackString<>("Bad Command Line"));
         return false;
     }
 
@@ -207,12 +208,13 @@ void FBuildWorkerOptions::ShowUsageError(const AString & title)
 
     #if defined( __WINDOWS__ )
         AStackString<> msg_title;
-        msg_title.Format("FBuildWorker - %s", title);
+        msg_title.Format("FBuildWorker - %s", title.Get());
         ::MessageBox( nullptr, msg, msg_title.Get(), MB_ICONERROR | MB_OK );
     #else
         printf( "%s", msg );
         (void)msg; // TODO:MAC Fix missing MessageBox
         (void)msg; // TODO:LINUX Fix missing MessageBox
+        (void)title;
     #endif
 }
 

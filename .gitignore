@@ -68,3 +68,5 @@ Temporary Items
 
 .vscode
 *.diff
+compile_commands.json
+.cache/

@@ -2,7 +2,7 @@
 //------------------------------------------------------------------------------
 {
     .ProjectName        = 'FBuildCoordinator'
-    .ProjectPath        = 'Tools\FBuild\FBuildCoordinator'
+    .ProjectPath        = 'Tools/FBuild/FBuildCoordinator'
 
     // Executable
     //--------------------------------------------------------------------------

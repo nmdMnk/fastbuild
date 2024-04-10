@@ -19,7 +19,7 @@ class AString;
         class NSPipe;
     #endif
 
-    #define APPLE_PROCESS_USE_NSTASK
+    #define APPLE_PROCESS_USE_NSTASK 
 #endif
 
 // Process
@@ -107,7 +107,7 @@ private:
         NSPipe * m_StdErrRead;
     #endif
 
-    bool m_HasAborted;
+    bool m_HasAborted = false;
     const volatile bool * m_MainAbortFlag; // This member is set when we must cancel processes asap when the main process dies.
     const volatile bool * m_AbortFlag;
 };

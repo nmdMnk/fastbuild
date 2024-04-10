@@ -1,4 +1,8 @@
 // ProcessMac.mm
+
+// merge from  https://github.com/Incanta/fastbuild-unreal/blob/unreal/Code/Core/Process/ProcessMac.mm 
+// fix some compile error
+
 //------------------------------------------------------------------------------
 
 // Includes
@@ -9,10 +13,10 @@
 
 #include "Core/Env/Assert.h"
 #include "Core/Math/Conversions.h"
-#include "Core/Math/Constants.h"
 #include "Core/Process/Atomic.h"
 #include "Core/Process/Thread.h"
 #include "Core/Profile/Profile.h"
+#include "Core/Strings/AString.h"
 #include "Core/Time/Timer.h"
 
 // Static Data
@@ -27,7 +31,7 @@ Process::Process( const volatile bool * masterAbortFlag,
     , m_StdOutRead( nil )
     , m_StdErrRead( nil )
     , m_HasAborted( false )
-    , m_MasterAbortFlag( masterAbortFlag )
+    , m_MainAbortFlag( masterAbortFlag )
     , m_AbortFlag( abortFlag )
 {
 }
@@ -67,12 +71,12 @@ bool Process::Spawn( const char * executable,
                      __attribute__((unused)) const char * environment,
                      __attribute__((unused)) bool shareHandles )
 {
-    PROFILE_FUNCTION
+    PROFILE_FUNCTION;
 
     ASSERT( !m_Started );
     ASSERT( executable );
 
-    if ( m_MasterAbortFlag && AtomicLoadRelaxed( m_MasterAbortFlag ) )
+    if ( m_MainAbortFlag && AtomicLoadRelaxed( m_MainAbortFlag ) )
     {
         // Once master process has aborted, we no longer permit spawning sub-processes.
         return false;
@@ -155,17 +159,12 @@ void Process::Detach()
 
 // ReadAllData
 //------------------------------------------------------------------------------
-bool Process::ReadAllData( AutoPtr< char > & outMem, uint32_t * outMemSize,
-                           AutoPtr< char > & errMem, uint32_t * errMemSize,
+bool Process::ReadAllData( AString & outMem,
+                           AString & errMem,
                            __attribute__((unused)) uint32_t timeOutMS )
 {
     @autoreleasepool {
 
-    // we'll capture into these growing buffers
-    __block uint32_t outSize = 0;
-    __block uint32_t errSize = 0;
-    __block uint32_t outBufferSize = 0;
-    __block uint32_t errBufferSize = 0;
     __block bool stdOutIsDone = false;
     __block bool stdErrIsDone = false;
 
@@ -176,17 +175,17 @@ bool Process::ReadAllData( AutoPtr< char > & outMem, uint32_t * outMemSize,
         NSData * stdOutData = [stdOutHandle availableData];
         while ( [stdOutData length] > 0 )
         {
-            const bool masterAbort = ( m_MasterAbortFlag && AtomicLoadRelaxed( m_MasterAbortFlag ) );
+            const bool masterAbort = ( m_MainAbortFlag && AtomicLoadRelaxed( m_MainAbortFlag ) );
             const bool abort = ( m_AbortFlag && AtomicLoadRelaxed( m_AbortFlag ) );
             if ( abort || masterAbort )
             {
-                PROFILE_SECTION( "Abort" )
+                PROFILE_SECTION( "Abort" );
                 KillProcessTree();
                 m_HasAborted = true;
                 break;
             }
 
-            Read( stdOutData, outMem, outSize, outBufferSize );
+            Read( stdOutData, outMem );
 
             stdOutData = [stdOutHandle availableData];
         }
@@ -201,17 +200,17 @@ bool Process::ReadAllData( AutoPtr< char > & outMem, uint32_t * outMemSize,
         NSData * stdErrData = [stdErrHandle availableData];
         while ( [stdErrData length] > 0 )
         {
-            const bool masterAbort = ( m_MasterAbortFlag && AtomicLoadRelaxed( m_MasterAbortFlag ) );
+            const bool masterAbort = ( m_MainAbortFlag && AtomicLoadRelaxed( m_MainAbortFlag ) );
             const bool abort = ( m_AbortFlag && AtomicLoadRelaxed( m_AbortFlag ) );
             if ( abort || masterAbort )
             {
-                PROFILE_SECTION( "Abort" )
+                PROFILE_SECTION( "Abort" );
                 KillProcessTree();
                 m_HasAborted = true;
                 break;
             }
 
-            Read( stdErrData, errMem, errSize, errBufferSize );
+            Read( stdErrData, errMem );
 
             stdErrData = [stdErrHandle availableData];
         }
@@ -227,10 +226,6 @@ bool Process::ReadAllData( AutoPtr< char > & outMem, uint32_t * outMemSize,
         sched_yield();
     }
 
-    // if owner asks for pointers, they now own the mem
-    if ( outMemSize ) { *outMemSize = outSize; }
-    if ( errMemSize ) { *errMemSize = errSize; }
-
     } // @autoreleasepool
 
     return true;
@@ -238,7 +233,7 @@ bool Process::ReadAllData( AutoPtr< char > & outMem, uint32_t * outMemSize,
 
 // Read
 //------------------------------------------------------------------------------
-void Process::Read( NSData * availableData, AutoPtr< char > & buffer, uint32_t & sizeSoFar, uint32_t & bufferSize )
+void Process::Read( NSData * availableData, AString & buffer )
 {
     @autoreleasepool {
 
@@ -250,34 +245,21 @@ void Process::Read( NSData * availableData, AutoPtr< char > & buffer, uint32_t &
     }
 
     // will it fit in the buffer we have?
-    if ( ( sizeSoFar + bytesAvail ) > bufferSize )
+    const uint32_t sizeSoFar = buffer.GetLength();
+    const uint32_t newSize = ( sizeSoFar + bytesAvail );
+    if ( newSize > buffer.GetReserved() )
     {
-        // no - allocate a bigger buffer (also handles the first time with no buffer)
-
-        // TODO:B look at a new container type (like a linked list of 1mb buffers) to avoid the wasteage here
-        // The caller has to take a copy to avoid the overhead if they want to hang onto the data
-        // grow buffer in at least 16MB chunks, to prevent future reallocations
-        uint32_t newBufferSize = Math::Max< uint32_t >( sizeSoFar + bytesAvail, bufferSize + ( 16 * MEGABYTE ) );
-        char * newBuffer = (char *)ALLOC( newBufferSize + 1 ); // +1 so we can always add a null char
-        if ( buffer.Get() )
-        {
-            // transfer and free old buffer
-            memcpy( newBuffer, buffer.Get(), sizeSoFar );
-        }
-        buffer = newBuffer; // will take care of deletion of old buffer
-        bufferSize = newBufferSize;
-        buffer.Get()[ sizeSoFar ] = '\000';
+        // Expand buffer for new data in large chunks
+        const uint32_t newBufferSize = Math::Max< uint32_t >( newSize, buffer.GetReserved() + ( 16 * MEGABYTE ) );
+        buffer.SetReserved( newBufferSize );
     }
 
     ASSERT( buffer.Get() );
-    ASSERT( sizeSoFar + bytesAvail <= bufferSize ); // sanity check
 
     [availableData getBytes:(buffer.Get() + sizeSoFar) length:bytesAvail];
 
-    sizeSoFar += bytesAvail;
-
-    // keep data null char terminated for caller convenience
-    buffer.Get()[ sizeSoFar ] = '\000';
+    // Update length
+    buffer.SetLength( sizeSoFar + bytesAvail );
 
     } // @autoreleasepool
 }
@@ -295,6 +277,13 @@ void Process::Terminate()
 {
     kill( m_Task.processIdentifier, SIGKILL );
 }
+
+bool Process::HasAborted() const
+{
+    return ( m_MainAbortFlag && AtomicLoadRelaxed( m_MainAbortFlag ) ) ||
+           ( m_AbortFlag && AtomicLoadRelaxed( m_AbortFlag ) );
+}
+
 
 //------------------------------------------------------------------------------
 

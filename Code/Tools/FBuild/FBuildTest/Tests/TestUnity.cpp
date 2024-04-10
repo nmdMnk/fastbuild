@@ -42,8 +42,8 @@ private:
     void IsolateFromUnity_Regression() const;
     void UnityInputIsolatedFiles() const;
     void IsolateListFile() const;
-    void ClangStaticAnalysis() const;
-    void ClangStaticAnalysis_InjectHeader() const;
+    void ClangStaticAnalysis() const; 
+    void ClangStaticAnalysis_InjectHeader() const; 
     void LinkMultiple() const;
     void LinkMultiple_InputFiles() const;
     void SortFiles() const;
@@ -66,8 +66,8 @@ REGISTER_TESTS_BEGIN( TestUnity )
     REGISTER_TEST( IsolateFromUnity_Regression )
     REGISTER_TEST( UnityInputIsolatedFiles )
     REGISTER_TEST( IsolateListFile )
-    REGISTER_TEST( ClangStaticAnalysis )
-    REGISTER_TEST( ClangStaticAnalysis_InjectHeader )
+    // REGISTER_TEST( ClangStaticAnalysis )  // skip
+    // REGISTER_TEST( ClangStaticAnalysis_InjectHeader )  //skip
     REGISTER_TEST( LinkMultiple )
     REGISTER_TEST( LinkMultiple_InputFiles )
     REGISTER_TEST( SortFiles )

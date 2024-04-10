@@ -16,7 +16,7 @@ class WorkerBrokerageClient : public WorkerBrokerage
 {
 public:
     WorkerBrokerageClient();
-    ~WorkerBrokerageClient();
+    ~WorkerBrokerageClient() override;
 
     void FindWorkers( Array< AString > & outWorkerList );
 

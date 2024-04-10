@@ -14,6 +14,7 @@
 #include "Core/Profile/Profile.h"
 #include "Core/Tracing/Tracing.h"
 
+PRAGMA_DISABLE_PUSH_MSVC(6340) 
 // CONSTRUCTOR
 //------------------------------------------------------------------------------
 Coordinator::Coordinator( const AString & args )
@@ -45,7 +46,7 @@ uint32_t Coordinator::Start()
 //------------------------------------------------------------------------------
 /*static*/ uint32_t Coordinator::WorkThreadWrapper( void * userData )
 {
-    Coordinator * coordinator = reinterpret_cast<Coordinator *>( userData );
+    Coordinator * coordinator = static_cast<Coordinator *>( userData );
     return coordinator->WorkThread();
 }
 
@@ -82,3 +83,5 @@ uint32_t Coordinator::WorkThread()
 }
 
 //------------------------------------------------------------------------------
+
+PRAGMA_DISABLE_POP_MSVC

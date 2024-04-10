@@ -12,7 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctime>
+
+#include <time.h>
 
 // Static
 //------------------------------------------------------------------------------
@@ -292,18 +293,19 @@ AString & AString::FormatTime( const char * fmtString, int64_t timestamp )
     size_t bufferSize = STACK_BUFFER_SIZE;
 
     #if defined( __WINDOWS__ )
-        std::tm timeinfo;
+        tm timeinfo;
         if( _localtime64_s( &timeinfo, &timestamp ) != 0)
         {
             return *this;
         }
-        std::tm * ptimeinfo = &timeinfo;
+        const tm * ptimeinfo = &timeinfo;
     #else
-        std::tm * ptimeinfo = std::localtime( &timestamp );
-        if ( timeinfo == nullptr ) return *this;
+        time_t ts = (time_t)timestamp;
+        const tm * ptimeinfo = localtime( &ts );
+        if ( ptimeinfo == nullptr ) return *this;
     #endif    
     
-    size_t len = std::strftime(buffer, bufferSize, fmtString, ptimeinfo);
+    size_t len = strftime(buffer, bufferSize, fmtString, ptimeinfo);
     Assign( buffer, buffer + len );
 
     return *this;

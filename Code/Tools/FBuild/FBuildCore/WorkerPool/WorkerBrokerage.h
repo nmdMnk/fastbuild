@@ -48,7 +48,7 @@ protected:
     AString             m_BrokerageRootPaths;
     bool                m_BrokerageInitialized;
 
-    AString             m_HostName;
+    AString             m_BaseHostName;
     AString             m_CoordinatorAddress;
     WorkerConnectionPool * m_ConnectionPool;
     const ConnectionInfo * m_Connection;

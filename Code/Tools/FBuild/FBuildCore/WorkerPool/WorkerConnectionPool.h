@@ -44,7 +44,7 @@ class WorkerConnectionPool : public TCPConnectionPool
 {
 public:
     WorkerConnectionPool();
-    virtual ~WorkerConnectionPool();
+    virtual ~WorkerConnectionPool() override;
     bool ClearTimeoutWorker();
     void OutputCurrentWorkers();
 
