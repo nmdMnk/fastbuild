@@ -59,6 +59,6 @@ jobs:
         with:
           name: OSX-Artifacts
           path: |
-            ../tmp/OSX-Release/Tools/FBuild/FBuild/FBuild
-            ../tmp/OSX-Release/Tools/FBuild/FBuildWorker/FBuildWorker
-            ../tmp/OSX-Release/Tools/FBuild/FBuildCoordinator/FBuildCoordinator
+            ${{ github.workspace }}/tmp/OSX-Release/Tools/FBuild/FBuild/FBuild
+            ${{ github.workspace }}/tmp/OSX-Release/Tools/FBuild/FBuildWorker/FBuildWorker
+            ${{ github.workspace }}/tmp/OSX-Release/Tools/FBuild/FBuildCoordinator/FBuildCoordinator
