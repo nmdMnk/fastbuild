@@ -602,7 +602,7 @@ void IdleDetection::UpdateProcessList()
 #if defined( __OSX__ )
     /*static*/ uint64_t IdleDetection::ConvertTimeString( const AString & timeString )
     {
-        Array< AString > tokens( 4, true );
+        Array< AString > tokens( 4 );
         timeString.Tokenize( tokens, ':' );
 
         if ( tokens.GetSize() > 0 )
