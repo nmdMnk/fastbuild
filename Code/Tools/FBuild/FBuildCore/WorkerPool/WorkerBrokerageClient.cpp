@@ -124,7 +124,7 @@ void WorkerBrokerageClient::FindWorkerFromCoordinator( Array< AString > & outWor
 void WorkerBrokerageClient::FindWorkerFromBrokerage( Array< AString > & outWorkerList )
 {
     // check for workers through brokerage
-    Array< AString > results( 256, true );
+    Array< AString > results( 256 );
     for( AString& root : m_BrokerageRoots )
     {
         const size_t filesBeforeSearch = results.GetSize();
