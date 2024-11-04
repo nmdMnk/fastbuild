@@ -322,8 +322,6 @@ bool Process::Spawn( const char * executable,
             {
                 argVector.Append( arg.Get() ); // leave arg as-is
             }
-
-            wordfree( &expResult );
         }
         argVector.Append( nullptr ); // argv must have be nullptr terminated
 
