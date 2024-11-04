@@ -40,7 +40,6 @@
                 .CompilerInputUnity     = '$ProjectName$-UnityObjCPP-$Platform$-$BuildConfigName$'
                 .CompilerOutputExtension= '.mm.o'
                 .CompilerOptions        + ' -fno-objc-arc'
-                                        + ' -x objective-c'
                 .CompilerOutputPath     = '$OutputBase$/$ProjectName$/'
             }
         #endif
