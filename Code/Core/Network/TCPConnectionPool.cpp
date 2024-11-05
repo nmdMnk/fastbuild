@@ -1080,7 +1080,7 @@ void TCPConnectionPool::ConnectionThreadFunction( ConnectionInfo * ci )
         // timout for select() operations
         // (modified by select, so we must recreate it)
         struct timeval timeout;
-        timeout.tv_sec = 10; //++ravenzhong: 10s
+        timeout.tv_sec = 0;
         timeout.tv_usec = 10000; // 10 ms
 
         // create a socket set (with just our socket in it)
