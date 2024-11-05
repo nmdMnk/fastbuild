@@ -180,6 +180,13 @@ bool WorkerBrokerage::ConnectToCoordinator()
 {
     if ( !m_CoordinatorAddress.IsEmpty() )
     {
+        //++ravenzhong
+        if(m_ConnectionPool != nullptr)
+        {
+            FDELETE m_ConnectionPool;
+            m_ConnectionPool = nullptr;
+        }
+        //--ravenzhong
         m_ConnectionPool = FNEW( WorkerConnectionPool );
         m_Connection = m_ConnectionPool->Connect( m_CoordinatorAddress, Protocol::COORDINATOR_PORT, 2000, this ); // 2000ms connection timeout
         if ( m_Connection == nullptr )
