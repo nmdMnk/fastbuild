@@ -77,8 +77,16 @@ static const float sBrokerageIPAddressUpdateTime = ( 5 * 60.0f );
 // CONSTRUCTOR
 //------------------------------------------------------------------------------
 WorkerBrokerage::WorkerBrokerage()
+    : WorkerBrokerage(false)
+{
+}
+
+// CONSTRUCTOR
+//------------------------------------------------------------------------------
+WorkerBrokerage::WorkerBrokerage(bool preferHostName)
     : m_Availability( false )
     , m_BrokerageInitialized( false )
+    , m_PreferHostName( preferHostName )
     , m_SettingsWriteTime( 0 )
     , m_ConnectionPool( nullptr )
     , m_Connection( nullptr )
@@ -577,7 +585,7 @@ void WorkerBrokerage::UpdateBrokerageFilePath()
 {
     if ( !m_BrokerageRoots.IsEmpty() )
     {
-        if ( !m_IPAddress.IsEmpty() )
+        if ( !m_IPAddress.IsEmpty() && !m_PreferHostName )
         {
             m_BrokerageFilePath.Format( "%s%s", m_BrokerageRoots[0].Get(), m_IPAddress.Get() );
         }

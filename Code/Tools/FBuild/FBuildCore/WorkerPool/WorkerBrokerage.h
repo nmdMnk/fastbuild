@@ -19,6 +19,7 @@ class WorkerBrokerage
 {
 public:
     WorkerBrokerage();
+    WorkerBrokerage(bool preferHostName);
     ~WorkerBrokerage();
 
     inline const Array<AString>& GetBrokerageRoots() const { return m_BrokerageRoots; }
@@ -42,6 +43,7 @@ private:
     AString             m_BrokerageRootPaths;
     bool                m_Availability;
     bool                m_BrokerageInitialized;
+    bool                m_PreferHostName = false;
     AString             m_HostName;
     AString             m_DomainName;
     AString             m_IPAddress;
