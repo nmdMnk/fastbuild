@@ -61,13 +61,13 @@ namespace Protocol
         MSG_JOB_RESULT_COMPRESSED   = 11, // Server -> Client : Return completed job (compressed)
 
         // v22.3 or later
-        MSG_CONNECTION_ACK     	= 12,// Server -> Client : Handshake ack
+        MSG_CONNECTION_ACK     	    = 12,// Server -> Client : Handshake ack
 
-        MSG_REQUEST_WORKER_LIST     = 12,// Client -> Coordinator : Ask coordinator for the list of workers
-        MSG_WORKER_LIST             = 13,// Client <- Coordinator : Respond with the list of workers
-        MSG_SET_WORKER_STATUS       = 14,// Server -> Coordinator : Sets worker status (available or unavailable)
+        MSG_REQUEST_WORKER_LIST     = 13,// Client -> Coordinator : Ask coordinator for the list of workers
+        MSG_WORKER_LIST             = 14,// Client <- Coordinator : Respond with the list of workers
+        MSG_SET_WORKER_STATUS       = 15,// Server -> Coordinator : Sets worker status (available or unavailable)
         
-        MSG_UPDATE_WORKER_INFO      = 15,// Client -> Coordinator : Update worker's info (version, local config, etc.)
+        MSG_UPDATE_WORKER_INFO      = 16,// Client -> Coordinator : Update worker's info (version, local config, etc.)
 
         NUM_MESSAGES                // leave last
     };
