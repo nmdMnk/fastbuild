@@ -18,7 +18,7 @@ public:
     ~WorkerSettings();
 
     // Worker Mode
-    enum Mode
+    enum Mode : uint8_t
     {
         DISABLED        = 0, // Don't work for anyone
         WHEN_IDLE       = 1, // Work for others when idle

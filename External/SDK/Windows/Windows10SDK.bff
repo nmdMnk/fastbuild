@@ -17,9 +17,9 @@
     //
     // Use Windows10SDK installation
     //
-    #if file_exists( "C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\RC.exe" )
+    #if file_exists( "C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\RC.exe" )
         .Windows10_SDKBasePath        = 'C:\Program Files (x86)\Windows Kits\10'
-        .Windows10_SDKVersion         = '10.0.19041.0'
+        .Windows10_SDKVersion         = '10.0.22621.0'
     #else
         //
         // Failed

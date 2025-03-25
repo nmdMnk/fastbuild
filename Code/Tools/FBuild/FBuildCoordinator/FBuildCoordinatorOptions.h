@@ -1,24 +1,25 @@
-// WorkerBrokerageClient - Client-side worker discovery
+// FBuildCoordinatorOptions
 //------------------------------------------------------------------------------
 #pragma once
 
 // Includes
 //------------------------------------------------------------------------------
-// FBuild
-#include "Tools/FBuild/FBuildCore/WorkerPool/WorkerBrokerage.h"
 
-// Forward Declarations
+// Forward Declaration
 //------------------------------------------------------------------------------
+class AString;
 
-// WorkerBrokerageClient
+// FBuildCoordinatorOptions
 //------------------------------------------------------------------------------
-class WorkerBrokerageClient : public WorkerBrokerage
+class FBuildCoordinatorOptions
 {
 public:
-    WorkerBrokerageClient();
-    ~WorkerBrokerageClient();
+    FBuildCoordinatorOptions();
 
-    void FindWorkers( Array< AString > & outWorkerList );
+    bool ProcessCommandLine( const AString & commandLine );
+
+private:
+    void ShowUsageError();
 };
 
 //------------------------------------------------------------------------------
