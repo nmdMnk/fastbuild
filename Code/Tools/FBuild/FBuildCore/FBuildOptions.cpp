@@ -15,6 +15,8 @@
 #include "Core/Math/xxHash.h"
 #include "Core/Tracing/Tracing.h"
 
+#include "string.h"
+
 // system
 #if defined( __WINDOWS__ )
     #include "Core/Env/WindowsHeader.h" // for QueryDosDeviceA
@@ -114,6 +116,13 @@ FBuildOptions::OptionsResult FBuildOptions::ProcessCommandLine( int argc, char *
             {
                 m_UseCacheRead = true;
                 m_UseCacheWrite = true;
+                continue;
+            }
+            else if ( thisArg == "-nocache" )
+            {
+                m_NoCache = true;
+                m_UseCacheRead = false;
+                m_UseCacheWrite = false;
                 continue;
             }
             else if ( thisArg == "-cacheread" )
@@ -464,6 +473,16 @@ FBuildOptions::OptionsResult FBuildOptions::ProcessCommandLine( int argc, char *
                     continue;
                 }
             #endif
+            else if (thisArg.BeginsWith("-coordinator="))
+            {
+                m_CoordinatorAddress = thisArg.Get() + strlen("-coordinator=");
+                continue;
+            }
+            else if (thisArg.BeginsWith("-brokerage="))
+            {
+                m_BrokeragePath = thisArg.Get() + strlen("-brokerage=");
+                continue;
+            }
 
             // can't use FLOG_ERROR as FLog is not initialized
             OUTPUT( "FBuild: Error: Unknown argument '%s'\n", thisArg.Get() );
@@ -495,7 +514,7 @@ FBuildOptions::OptionsResult FBuildOptions::ProcessCommandLine( int argc, char *
     }
 
     // cache mode environment variable (if not supplied on cmd line)
-    if ( ( m_UseCacheRead == false ) && ( m_UseCacheWrite == false ) )
+    if ( ( m_UseCacheRead == false ) && ( m_UseCacheWrite == false ) && (m_NoCache == false))
     {
         AStackString<> cacheMode;
         if ( Env::GetEnvVariable( "FASTBUILD_CACHE_MODE", cacheMode ) )
@@ -624,6 +643,7 @@ void FBuildOptions::DisplayHelp( const AString & programName ) const
             "Options:\n"
             " -cache[read|write]\n"
             "                   Control use of the build cache.\n"
+            " -nocache          Do not use cache.\n"
             " -cachecompressionlevel <level>\n"
             "                   Control compression for cache artifacts (default: -1)\n"
             "                   - <= -1 : less compression, with -128 being the lowest\n"
@@ -686,6 +706,10 @@ void FBuildOptions::DisplayHelp( const AString & programName ) const
             "                   termination from Visual Studio.\n"
             " -wsl <wslPath> <args...>\n"
             "                   (Windows) Forward to the Windows Subsystem for Linux\n"
+            " -coordinator=<ip address>\n"
+            "                   Set FBuildCoordinator ip address.\n"
+            " -brokerage=<path>\n"
+            "                   Set Brokerage path.\n"
             "--------------------------------------------------------------------------------\n" );
 }
 

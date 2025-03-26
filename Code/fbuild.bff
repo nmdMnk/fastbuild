@@ -448,8 +448,8 @@ ForEach( .BuildConfig in .BuildConfigs )
 //------------------------------------------------------------------------------
 Alias( 'Exes' )
 {
-    .Targets    = { 'FBuildWorker-Debug',      'FBuildWorker-Profile',      'FBuildWorker-Release'
-                    'FBuild-Debug',            'FBuild-Profile',            'FBuild-Release'
+    .Targets    = { 'FBuildWorker-Debug',   'FBuildWorker-Profile', 'FBuildWorker-Release'
+                    'FBuild-Debug',         'FBuild-Profile',       'FBuild-Release' 
                     'FBuildCoordinator-Debug', 'FBuildCoordinator-Profile', 'FBuildCoordinator-Release' }
 }
 

@@ -23,6 +23,7 @@
 #include "Core/Math/Random.h"
 #include "Core/Process/Atomic.h"
 #include "Core/Profile/Profile.h"
+#include "Core/Tracing/Tracing.h"
 
 // Defines
 //------------------------------------------------------------------------------
@@ -433,6 +434,7 @@ void Client::Process( const ConnectionInfo * connection, const Protocol::MsgRequ
         MutexHolder mh( ss->m_Mutex );
         const Protocol::MsgNoJobAvailable msg;
         SendMessageInternal( connection, msg );
+        DEBUGSPAM("Request job: blocked\n");
         return;
     }
 
@@ -445,6 +447,7 @@ void Client::Process( const ConnectionInfo * connection, const Protocol::MsgRequ
         MutexHolder mh( ss->m_Mutex );
         const Protocol::MsgNoJobAvailable msg;
         SendMessageInternal( connection, msg );
+        DEBUGSPAM("Request job: NoJob\n");
         return;
     }
 

@@ -5,8 +5,10 @@
 //------------------------------------------------------------------------------
 #if __LINUX__ && !CI_BUILD
     //#define USING_CLANG_6
-    #define USING_CLANG_10
+    //#define USING_CLANG_10
+    #define USING_CLANG_12
     //#define USING_CLANG_14
+    //#define USING_CLANG_15
     //#define USING_CLANG_18
 #endif
 #if __OSX__ && !CI_BUILD
@@ -36,6 +38,9 @@
     #endif
     #if USING_CLANG_10
         #include "Linux/Clang10.bff"
+    #endif
+    #if USING_CLANG_12
+        #include "Linux/Clang12.bff"
     #endif
     #if USING_CLANG_14
         #include "Linux/Clang14.bff"

@@ -35,15 +35,14 @@ Coordinator::~Coordinator()
 int32_t Coordinator::Start()
 {
     // spawn work thread
-    Thread workThread;
-    workThread.Start( &WorkThreadWrapper,
+    m_WorkThread.Start( &WorkThreadWrapper,
                       "CoordinatorThread",
                       this,
                       ( 256 * KILOBYTE ));
-    ASSERT( workThread.IsRunning() );
+    ASSERT( m_WorkThread.IsRunning() );
 
     // Join work thread and get exit code
-    return static_cast<int32_t>(workThread.Join());
+    return static_cast<int32_t>(m_WorkThread.Join());
 }
 
 // WorkThreadWrapper
@@ -67,12 +66,20 @@ uint32_t Coordinator::WorkThread()
         OUTPUT( "Failed to listen on port %u.  Check port is not in use.\n", (uint32_t)Protocol::COORDINATOR_PORT );
         return (uint32_t)-3;
     }
+    m_ConnectionPool->OutputCurrentWorkers();
 
+    Timer timer;
     for(;;)
     {
         PROFILE_SYNCHRONIZE
 
         Thread::Sleep( 500 );
+
+        if ( timer.GetElapsed() >= 10 )
+        {
+            m_ConnectionPool->ClearTimeoutWorker();
+            timer.Start();
+        }
     }
 
     //return 0;

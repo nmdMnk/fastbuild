@@ -6,11 +6,14 @@
 #include "AString.h"
 #include "AStackString.h"
 #include "Core/Math/Conversions.h"
+#include "Core/Tracing/Tracing.h"
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctime>
+#include <time.h>
 
 // Static
 //------------------------------------------------------------------------------
@@ -254,7 +257,7 @@ loop:
         va_list argsCopy;
         va_copy( argsCopy, args );
         PRAGMA_DISABLE_PUSH_CLANG( "-Wformat-nonliteral" )
-        int len = vsnprintf( nullptr, 0, fmtString, argsCopy );
+        const int len = vsnprintf( nullptr, 0, fmtString, argsCopy );
         PRAGMA_DISABLE_POP_CLANG
         va_end( argsCopy );
         if ( len > ( (int)bufferSize - 1 ) )
@@ -275,6 +278,35 @@ loop:
     {
         FREE( buffer );
     }
+
+    return *this;
+}
+
+// FormatTime
+//------------------------------------------------------------------------------
+AString & AString::FormatTime( const char * fmtString, int64_t timestamp )
+{
+    // try to work entirely on the stack
+    const uint32_t STACK_BUFFER_SIZE( KILOBYTE );
+    char stackBuffer[ STACK_BUFFER_SIZE ];
+    char * buffer = stackBuffer;
+    const size_t bufferSize = STACK_BUFFER_SIZE;
+
+    #if defined( __WINDOWS__ )
+        std::tm timeinfo;
+        if( _localtime64_s( &timeinfo, &timestamp ) != 0)
+        {
+            return *this;
+        }
+        const tm * ptimeinfo = &timeinfo;
+    #else
+        time_t ts = (time_t)timestamp;
+        const tm * ptimeinfo = localtime( &ts );
+        if ( ptimeinfo == nullptr ) return *this;
+    #endif    
+    
+    const size_t len = strftime(buffer, bufferSize, fmtString, ptimeinfo);
+    Assign( buffer, buffer + len );
 
     return *this;
 }

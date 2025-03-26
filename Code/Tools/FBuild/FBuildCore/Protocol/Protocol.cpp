@@ -43,8 +43,7 @@
             "ConnectionAck",
             "RequestWorkerList",
             "WorkerList",
-            "SetWorkerStatus",
-            "UpdateWorkerInfo"
+            "SetWorkerStatus"
         };
         static_assert( ( sizeof( msgNames ) / sizeof(const char *) ) == Protocol::NUM_MESSAGES, "msgNames item count doesn't match NUM_MESSAGES" );
 
@@ -219,20 +218,19 @@ Protocol::MsgFile::MsgFile( uint64_t toolId, uint32_t fileId )
 
 // MsgRequestWorkerList
 //------------------------------------------------------------------------------
-Protocol::MsgRequestWorkerList::MsgRequestWorkerList( bool bShouldGetAllInfo )
+Protocol::MsgRequestWorkerList::MsgRequestWorkerList()
     : Protocol::IMessage( Protocol::MSG_REQUEST_WORKER_LIST, sizeof( MsgRequestWorkerList ), false )
     , m_ProtocolVersion( PROTOCOL_VERSION_MAJOR )
     , m_Platform(Env::GetPlatform())
-    , m_ShouldGetAllInfo(bShouldGetAllInfo)
-    {
-    }
+{
+}
 
 // MsgWorkerList
 //------------------------------------------------------------------------------
 Protocol::MsgWorkerList::MsgWorkerList()
     : Protocol::IMessage( Protocol::MSG_WORKER_LIST, sizeof( MsgWorkerList ), true )
-    {
-    }
+{
+}
 
 // MsgSetWorkerStatus
 //------------------------------------------------------------------------------
@@ -241,14 +239,7 @@ Protocol::MsgSetWorkerStatus::MsgSetWorkerStatus( bool isAvailable )
     , m_IsAvailable( isAvailable )
     , m_ProtocolVersion( PROTOCOL_VERSION_MAJOR )
     , m_Platform(Env::GetPlatform())
-    {
-    }
-
-// MsgUpdateWorkerInfo
-//------------------------------------------------------------------------------
-Protocol::MsgUpdateWorkerInfo::MsgUpdateWorkerInfo()
-    : Protocol::IMessage( Protocol::MSG_UPDATE_WORKER_INFO, sizeof( MsgUpdateWorkerInfo ), true )
-    {
-    }
+{
+}
 
 //------------------------------------------------------------------------------

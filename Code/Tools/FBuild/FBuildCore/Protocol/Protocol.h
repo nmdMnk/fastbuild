@@ -42,34 +42,31 @@ namespace Protocol
     //------------------------------------------------------------------------------
     enum MessageType : uint8_t
     {
-        MSG_CONNECTION              = 1, // Server <- Client : Initial handshake
-        MSG_STATUS                  = 2, // Server <- Client : Update status (work available)
+        MSG_CONNECTION          = 1, // Server <- Client : Initial handshake
+        MSG_STATUS              = 2, // Server <- Client : Update status (work available)
 
-        MSG_REQUEST_JOB             = 3, // Server -> Client : Ask for a job to do
-        MSG_NO_JOB_AVAILABLE        = 4, // Server <- Client : Respond that no jobs are available
-        MSG_JOB                     = 5, // Server <- Client : Respond with a job to do
+        MSG_REQUEST_JOB         = 3, // Server -> Client : Ask for a job to do
+        MSG_NO_JOB_AVAILABLE    = 4, // Server <- Client : Respond that no jobs are available
+        MSG_JOB                 = 5, // Server <- Client : Respond with a job to do
 
-        MSG_JOB_RESULT              = 6, // Server -> Client : Return completed job (uncompressed)
+        MSG_JOB_RESULT          = 6, // Server -> Client : Return completed job (uncompressed)
 
-        MSG_REQUEST_MANIFEST        = 7, // Server -> Client : Ask client for the manifest of tools required for a job
-        MSG_MANIFEST                = 8, // Server <- Client : Respond with manifest details
+        MSG_REQUEST_MANIFEST    = 7, // Server -> Client : Ask client for the manifest of tools required for a job
+        MSG_MANIFEST            = 8, // Server <- Client : Respond with manifest details
 
-        MSG_REQUEST_FILE            = 9, // Server -> Client : Ask client for a file
-        MSG_FILE                    = 10,// Server <- Client : Send a requested file
+        MSG_REQUEST_FILE        = 9, // Server -> Client : Ask client for a file
+        MSG_FILE                = 10,// Server <- Client : Send a requested file
 
         // v22.1 or later
         MSG_JOB_RESULT_COMPRESSED   = 11, // Server -> Client : Return completed job (compressed)
 
         // v22.3 or later
-        MSG_CONNECTION_ACK     	    = 12,// Server -> Client : Handshake ack
+        MSG_CONNECTION_ACK      = 12,// Server -> Client : Handshake ack
+        MSG_REQUEST_WORKER_LIST = 13,// Client -> Coordinator : Ask coordinator for the list of workers
+        MSG_WORKER_LIST         = 14,// Client <- Coordinator : Respond with the list of workers
+        MSG_SET_WORKER_STATUS   = 15,// Server -> Coordinator : Sets worker status (available or unavailable)
 
-        MSG_REQUEST_WORKER_LIST     = 13,// Client -> Coordinator : Ask coordinator for the list of workers
-        MSG_WORKER_LIST             = 14,// Client <- Coordinator : Respond with the list of workers
-        MSG_SET_WORKER_STATUS       = 15,// Server -> Coordinator : Sets worker status (available or unavailable)
-        
-        MSG_UPDATE_WORKER_INFO      = 16,// Client -> Coordinator : Update worker's info (version, local config, etc.)
-
-        NUM_MESSAGES                // leave last
+        NUM_MESSAGES            // leave last
     };
 }
 
@@ -114,7 +111,7 @@ namespace Protocol
         inline uint32_t GetProtocolVersion() const { return m_ProtocolVersion; }
         inline uint32_t GetNumJobsAvailable() const { return m_NumJobsAvailable; }
         inline uint8_t  GetPlatform() const { return m_Platform; }
-        const char *    GetHostName() const { return m_HostName; }
+        const char * GetHostName() const { return m_HostName; }
         uint8_t         GetProtocolVersionMinor() const { return m_ProtocolVersionMinor; }
     private:
         uint32_t        m_ProtocolVersion;
@@ -279,15 +276,13 @@ namespace Protocol
     class MsgRequestWorkerList : public IMessage
     {
     public:
-        MsgRequestWorkerList(bool bShouldGetAllInfo);
+        MsgRequestWorkerList();
 
         inline uint32_t GetProtocolVersion() const { return m_ProtocolVersion; }
         inline uint8_t  GetPlatform() const { return m_Platform; }
-        inline bool     GetShouldGetAllInfo() const { return m_ShouldGetAllInfo; }
     private:
         uint32_t        m_ProtocolVersion;
         uint8_t         m_Platform;
-        bool            m_ShouldGetAllInfo;
     };
     static_assert( sizeof( MsgRequestWorkerList ) == sizeof( IMessage ) + 8, "MsgRequestWorkerList message has incorrect size" );
 
@@ -316,15 +311,6 @@ namespace Protocol
         uint8_t         m_Platform;
     };
     static_assert( sizeof( MsgSetWorkerStatus ) == sizeof( IMessage ) + 12, "MsgSetWorkerStatus message has incorrect size" );
-
-    // MsgUpdateWorkerInfo
-    //------------------------------------------------------------------------------
-    class MsgUpdateWorkerInfo : public IMessage
-    {
-    public:
-        explicit MsgUpdateWorkerInfo();
-    };
-    static_assert( sizeof( MsgUpdateWorkerInfo ) == sizeof( IMessage ), "MsgUpdateWorkerInfo message has incorrect size" );
 };
 
 //------------------------------------------------------------------------------

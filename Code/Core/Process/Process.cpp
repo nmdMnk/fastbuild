@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 #include "Process.h"
 
+#if !defined( __APPLE__ ) || !defined( APPLE_PROCESS_USE_NSTASK )
+
 #include "Core/Env/Assert.h"
 #include "Core/FileIO/FileIO.h"
 #include "Core/Math/Conversions.h"
@@ -30,6 +32,7 @@
     #include <string.h>
     #include <sys/wait.h>
     #include <unistd.h>
+    #include <wordexp.h>
 #endif
 
 // Static Data
@@ -54,6 +57,7 @@ Process::Process( const volatile bool * mainAbortFlag,
     , m_MainAbortFlag( mainAbortFlag )
     , m_AbortFlag( abortFlag )
 {
+    m_HasAborted = false;
     #if defined( __WINDOWS__ )
         static_assert( sizeof( m_ProcessInfo ) == sizeof( PROCESS_INFORMATION ), "Unexpected sizeof(PROCESS_INFORMATION)" );
     #endif
@@ -567,7 +571,7 @@ bool Process::ReadAllData( AString & outMem,
 {
     const Timer t;
 
-    #if defined( __LINUX__ )
+    #if defined( __LINUX__ ) || defined( __APPLE__ )
         // Start with a short sleep interval to allow rapid termination of
         // short-lived processes. The timeout increases during periods of
         // no output and reset when receiving output to balance responsiveness
@@ -593,7 +597,7 @@ bool Process::ReadAllData( AString & outMem,
         // did we get some data?
         if ( ( prevOutSize != outMem.GetLength() ) || ( prevErrSize != errMem.GetLength() ) )
         {
-            #if defined( __LINUX__ )
+            #if defined( __LINUX__ ) || defined( __APPLE__ )
                 // Reset sleep interval
                 sleepIntervalMS = 1;
             #endif
@@ -633,19 +637,12 @@ bool Process::ReadAllData( AString & outMem,
                 }
 
                 // no data available, but process is still going, so wait
-                #if defined( __OSX__ )
-                    // On OSX there seems to be no way to set the pipe bufffer
-                    // size so we must instead wake up frequently to avoid the
-                    // writer being blocked.
-                    Thread::Sleep( 2 );
-                #else
-                    // TODO:C Investigate waiting on an event when process terminates
-                    // to reduce overall process spawn time
-                    Thread::Sleep( sleepIntervalMS );
+                // TODO:C Investigate waiting on an event when process terminates
+                // to reduce overall process spawn time
+                Thread::Sleep( sleepIntervalMS );
 
-                    // Increase sleep interval upto limit
-                    sleepIntervalMS = Math::Min<uint32_t>( sleepIntervalMS * 2, 8 );
-                #endif
+                // Increase sleep interval upto limit
+                sleepIntervalMS = Math::Min<uint32_t>( sleepIntervalMS * 2, 8 );
                 continue;
             }
         #endif
@@ -779,3 +776,5 @@ void Process::Terminate()
 }
 
 //------------------------------------------------------------------------------
+
+#endif // !defined( __APPLE__ ) || !defined( APPLE_PROCESS_USE_NSTASK )

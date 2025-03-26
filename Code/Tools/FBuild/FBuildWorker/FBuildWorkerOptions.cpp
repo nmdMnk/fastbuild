@@ -15,6 +15,8 @@
 
 // system
 #include <stdio.h>
+#include <string.h>
+
 #if defined( __WINDOWS__ )
     #include "Core/Env/WindowsHeader.h"
 #endif
@@ -150,6 +152,16 @@ bool FBuildWorkerOptions::ProcessCommandLine( const AString & commandLine )
             m_PreferHostName = true;
             continue;
         }
+        else if (token.BeginsWith("-coordinator="))
+        {
+            m_CoordinatorAddress = token.Get() + strlen("-coordinator=");
+            continue;
+        }
+        else if (token.BeginsWith("-brokerage="))
+        {
+            m_BrokeragePath = token.Get() + strlen("-brokerage=");
+            continue;
+        }
 
         ShowUsageError();
         return false;
@@ -189,6 +201,10 @@ void FBuildWorkerOptions::ShowUsageError()
                        "        Worker will restart every 4 hours.\n"
                        " -preferhostname\n"
                        "        Broker filename will be the hostname instead of the IP Address.\n"
+                       " -coordinator=<ip address>\n"
+                       "        Set FBuildCoordinator ip address.\n"
+                       " -brokerage=<path>\n"
+                       "        Set Brokerage path.\n"
                        "---------------------------------------------------------------------------\n"
                        ;
 

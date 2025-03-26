@@ -33,7 +33,7 @@
                 .ExecExecutable             = .Linker
                 .ExecInput                  = 'Tools/FBuild/Icons/16x16_blue.png'
                 .ExecArguments              = '-r -o "%2" -sectcreate binary trayicon "%1"'
-											+ ' -shared'
+                                            + ' -shared'
                                             + ' -mmacosx-version-min=10.7'
                 If( .Platform == 'x64OSX' )
                 {
@@ -123,6 +123,7 @@
             #endif
             #if __OSX__
                 .LinkerOptions              + ' -framework Cocoa'
+                                            + ' -framework Foundation'
             #endif
             #if __LINUX__
                 .LinkerOptions              + ' -pthread -ldl -lrt'

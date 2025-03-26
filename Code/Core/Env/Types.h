@@ -102,6 +102,12 @@ typedef signed int          int32_t;
 
 #define ARRAY_SIZE( array ) ( sizeof( array ) / sizeof( array[0] ) )
 
+#if defined( __WINDOWS__ ) || defined( __LINUX__ )
+    #ifndef time_t
+        typedef int64_t time_t;
+    #endif
+#endif
+
 // Warning disabling
 //------------------------------------------------------------------------------
 #if defined( __WINDOWS__ )

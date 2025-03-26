@@ -30,6 +30,7 @@ private:
 
     AString                 m_BaseArgs;
     WorkerConnectionPool    * m_ConnectionPool;
+    Thread                  m_WorkThread;
 };
 
 //------------------------------------------------------------------------------

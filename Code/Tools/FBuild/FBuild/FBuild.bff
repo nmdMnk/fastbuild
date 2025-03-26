@@ -86,6 +86,7 @@
                 .ExtractDebugInfo           = 'dsymutil -o $LinkerOutput$.dSYM $LinkerOutput$'
                 .StripDebugInfo             = 'strip -x $LinkerOutput$'
                 .LinkerStampExeArgs         = '-c "$ExtractDebugInfo$ && $StripDebugInfo$"'
+                .LinkerOptions              + ' -framework Foundation'
             #endif
         }
         #if __WINDOWS__

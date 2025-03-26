@@ -65,3 +65,8 @@ External/SDK/Windows/*/
 Network Trash Folder
 Temporary Items
 .apdisk
+
+.vscode
+*.diff
+compile_commands.json
+.cache/

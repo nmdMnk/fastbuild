@@ -2,7 +2,7 @@
 //------------------------------------------------------------------------------
 {
     .ProjectName        = 'FBuildCoordinator'
-    .ProjectPath        = 'Tools\FBuild\FBuildCoordinator'
+    .ProjectPath        = 'Tools/FBuild/FBuildCoordinator'
 
     // Executable
     //--------------------------------------------------------------------------
@@ -40,8 +40,8 @@
                                             'FBuildCoordinator-Lib-$Platform$-$BuildConfigName$',
                                             'FBuildCore-Lib-$Platform$-$BuildConfigName$',
                                             'Core-Lib-$Platform$-$BuildConfigName$',
-                                            'LZ4-Lib-$Platform$-$BuildConfigName$',
-                                            'xxHash-Lib-$Platform$-$BuildConfigName$',
+                                            'LZ4-Lib-$Platform$-$BuildConfigName$'
+                                            'xxHash-Lib-$Platform$-$BuildConfigName$'
                                             'Zstd-Lib-$Platform$-$BuildConfigName$'
                                           }
             #if __LINUX__
@@ -68,6 +68,9 @@
                 .AddDebugLink               = 'objcopy --add-gnu-debuglink $LinkerOutput$.debug $LinkerOutput$'
                 .LinkerStampExeArgs         = '-c "$ExtractDebugInfo$ && $StripDebugInfo$ && $AddDebugLink$"'
             #endif
+            #if __OSX__
+                .LinkerOptions              + ' -framework Foundation'
+            #endif
         }
         Alias( '$ProjectName$-$Platform$-$BuildConfigName$' ) { .Targets = '$ProjectName$-Exe-$Platform$-$BuildConfigName$' }
         ^'Targets_$Platform$_$BuildConfigName$' + { '$ProjectName$-$Platform$-$BuildConfigName$' }
@@ -81,6 +84,19 @@
             ^ProjectConfigs             + .ProjectConfig
         #endif
     }
+
+    // Create Universal binaries
+    #if CLANG_SUPPORTS_ARMOSX
+        ForEach( .BuildConfig in .BuildConfigs )
+        {
+            Using( .BuildConfig )
+            If( .Platform == 'ARMOSX' )
+            {
+                CreateUniversalBinary( .ProjectName, .ProjectPath, .BuildConfigName, .OutputBase )
+                ^'Targets_OSX_$BuildConfigName$' + { '$ProjectName$-OSX-$BuildConfigName$' }
+            }
+        }
+    #endif
 
     // Aliases
     //--------------------------------------------------------------------------

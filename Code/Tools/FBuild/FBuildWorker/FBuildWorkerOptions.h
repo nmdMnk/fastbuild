@@ -9,6 +9,7 @@
 
 // Core
 #include "Core/Env/Types.h"
+#include "Core/Strings/AString.h"
 
 // Forward Declaration
 //------------------------------------------------------------------------------
@@ -42,6 +43,12 @@ public:
     // Other
     bool m_PeriodicRestart;
     bool m_PreferHostName;
+
+    // Coordinator ip
+    AString m_CoordinatorAddress;
+
+    // Brokerage path
+    AString m_BrokeragePath;
 
 private:
     void ShowUsageError();
