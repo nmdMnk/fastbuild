@@ -105,9 +105,13 @@ void WorkerBrokerageClient::FindWorkerFromCoordinator( Array< AString > & outWor
             TCPConnectionPool::GetAddressAsString( *it, workerName );
 
             // Filter out local addresses
-            if ( localAddresses.Find( workerName ) || workerName.CompareI( m_BaseHostName ) == 0 || workerName.CompareI( "127.0.0.1" ) == 0)
+            if ( localAddresses.Find( workerName ) || workerName.CompareI( m_BaseHostName ) == 0 || workerName.CompareI( "127.0.0.1" ) == 0 )
             {
                 OUTPUT( "Skipping local woker: %s\n", workerName.Get() );
+            }
+            else if ( workerName.CompareI( "0.0.0.0" ) == 0 )
+            {
+                OUTPUT( "Skipping invalid woker: %s\n", workerName.Get() );
             }
             else
             {
@@ -158,8 +162,9 @@ void WorkerBrokerageClient::FindWorkerFromBrokerage( Array< AString > & outWorke
         AStackString<> workerName( lastSlash + 1 );
 
         // Filter out local addresses
-        if ( localAddresses.Find( workerName ) )
+        if ( localAddresses.Find( workerName ) || workerName.CompareI( m_BaseHostName ) == 0)
         {
+            OUTPUT( "Skipping local woker: %s\n", workerName.Get() );
             continue;
         }
 
